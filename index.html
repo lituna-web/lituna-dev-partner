@@ -1,62 +1,100 @@
 <!DOCTYPE html>
-<html lang="es" class="h-full bg-slate-950 text-slate-100">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Enterprise Gateway | Lituna</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="flex min-h-full flex-col justify-between p-6 md:p-12 font-sans antialiased selection:bg-indigo-500 selection:text-white">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0A0A0B;
+            --card: #101114;
+            --border: #1F2024;
+            --grid: #1A1B1F;
+            --fg: #E8E8EA;
+            --muted: #8A8A92;
+            --quiet: #5A5A60;
+            --amber: #D97706;
+        }
 
-    <!-- Encabezado sutil con el Logo -->
-    <header class="w-full max-w-7xl mx-auto">
-        <div class="flex items-center gap-2">
-            <div class="h-4 w-4 bg-indigo-500 rounded-sm animate-pulse"></div>
-            <span class="text-sm font-semibold tracking-wider text-slate-400 uppercase">Lituna Core</span>
-        </div>
-    </header>
+        * {
+            box-sizing: border-box;
+        }
 
-    <!-- Contenedor Central Exclusivo de Acceso -->
-    <main class="w-full max-w-md mx-auto my-auto flex flex-col justify-center">
-        <div class="text-center sm:text-left mb-8">
-            <h1 class="text-2xl font-bold tracking-tight text-white sm:text-3xl">Plataforma de IA Enterprise</h1>
-            <p class="mt-2 text-sm text-slate-400">Entorno restringido para ejecución de pilotos integrados y monitoreo situacional de datos.</p>
-        </div>
+        html {
+            min-height: 100%;
+            background: var(--bg);
+            color: var(--fg);
+            font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
 
-        <div class="space-y-4 bg-slate-900/50 border border-slate-800 p-6 rounded-xl backdrop-blur-sm">
-            <!-- Acceso a la App del Cliente -->
-            <a href="https://pilot.tuempresa.io" 
-               class="flex w-full items-center justify-center rounded-lg bg-indigo-600 px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-all duration-200">
-                Iniciar Sesión (Client Portal)
-            </a>
-            
-            <div class="relative flex py-2 items-center text-xs text-slate-600 uppercase tracking-widest">
-                <div class="flex-grow border-t border-slate-800"></div>
-                <span class="flex-shrink mx-3">Control interno</span>
-                <div class="flex-grow border-t border-slate-800"></div>
-            </div>
+        body {
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            padding: 32px;
+            background:
+                linear-gradient(var(--grid) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+                var(--bg);
+            background-size: 72px 72px;
+            background-position: center top;
+            color: var(--fg);
+            -webkit-font-smoothing: antialiased;
+            text-rendering: geometricPrecision;
+        }
 
-            <!-- Acceso a la Consola de Administración (Protegido por Cloudflare) -->
-            <a href="https://pilot-console.tuempresa.io" 
-               class="flex w-full items-center justify-center rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 text-sm font-medium text-slate-300 hover:bg-slate-900 hover:text-white hover:border-slate-600 transition-all duration-200">
-                Admin Console & Governance
-            </a>
-        </div>
-    </main>
+        ::selection {
+            background: var(--amber);
+            color: var(--bg);
+        }
 
-    <!-- Pie de página con blindaje de marca e indicadores corporativos -->
-    <footer class="w-full max-w-7xl mx-auto mt-auto pt-8 border-t border-t-slate-900/60 flex flex-col lg:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-        <div class="text-center lg:text-left">
-            &copy; 2026 Lituna. Todos los derechos reservados. Acceso restringido bajo políticas de confidencialidad NDA.
-        </div>
-        <!-- Sellos de confianza incluyendo la gobernanza de IA (ISO 42001) -->
-        <div class="flex flex-wrap justify-center items-center gap-3 grayscale opacity-40 font-mono tracking-widest text-[10px]">
-            <span class="border border-slate-700 px-1.5 py-0.5 rounded">SOC 2 READY</span>
-            <span class="border border-slate-700 px-1.5 py-0.5 rounded">ISO 42001 ALIGNED</span>
-            <span class="border border-slate-700 px-1.5 py-0.5 rounded">AES-256</span>
-            <span class="border border-slate-700 px-1.5 py-0.5 rounded">ISO 27001 AMBIT</span>
-        </div>
-    </footer>
+        .shell {
+            width: min(100%, 1120px);
+            margin: 0 auto;
+        }
 
-</body>
-</html>
+        header,
+        footer {
+            flex: 0 0 auto;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--fg);
+            font-family: "JetBrains Mono", monospace;
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .mark {
+            display: inline-grid;
+            grid-template-columns: repeat(2, 10px);
+            width: 20px;
+            height: 10px;
+        }
+
+        .mark::before,
+        .mark::after {
+            content: "";
+            display: block;
+            width: 10px;
+            height: 10px;
+        }
+
+        .mark::before {
+            background: var(--amber);
