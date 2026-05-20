@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -290,14 +290,12 @@
 
         @media (max-width: 720px) {
             body {
-                padding: 24px 18px;
+                padding: 28px 18px 32px;
                 background-size: 48px 48px;
             }
 
-            header,
-            footer {
+            header {
                 align-items: flex-start;
-                flex-direction: column;
             }
 
             .status {
@@ -306,11 +304,42 @@
 
             main {
                 place-items: start center;
-                padding: 74px 0 56px;
+                padding: 56px 0 72px;
+            }
+
+            footer {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 24px;
+                padding-top: 28px;
+            }
+
+            .legal {
+                max-width: 100%;
             }
 
             .trust {
-                justify-content: flex-start;
+                width: 100%;
+                align-items: flex-start;
+                gap: 16px;
+            }
+
+            .trust-badges {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                justify-content: unset;
+                width: 100%;
+            }
+
+            .trust span {
+                text-align: center;
+                padding: 8px 6px;
+            }
+
+            .trust-tagline {
+                text-align: left;
+                max-width: 100%;
+                line-height: 1.7;
             }
         }
     </style>
@@ -326,9 +355,9 @@
     <main class="shell">
         <section class="gateway" aria-labelledby="gateway-title">
             <p class="kicker">Enterprise Gateway &middot; Restricted Access</p>
-            <h1 id="gateway-title">Acceso a <em>infraestructura operacional</em>.</h1>
+            <h1 id="gateway-title">Access to <em>operational infrastructure</em>.</h1>
             <p class="intro">
-                Entorno restringido para pilotos integrados, monitoreo situacional y gobierno de decisiones bajo politica nominal.
+                Restricted environment for integrated pilots, situational monitoring, and governed decision operations.
             </p>
 
             <div class="panel">
@@ -367,7 +396,7 @@
 
     <footer class="shell">
         <div class="legal">
-            &copy; Lituna 2026. Acceso restringido bajo politicas de confidencialidad NDA.
+            &copy; Lituna 2026. Restricted access under NDA confidentiality policies.
         </div>
         <div class="trust" aria-label="Security and governance posture">
             <div class="trust-badges">
