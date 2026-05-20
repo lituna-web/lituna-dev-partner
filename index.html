@@ -98,3 +98,272 @@
 
         .mark::before {
             background: var(--amber);
+        }
+
+        .mark::after {
+            border: 1px solid var(--fg);
+            border-left: 0;
+        }
+
+        .status {
+            color: var(--quiet);
+            font-family: "JetBrains Mono", monospace;
+            font-size: 11px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        main {
+            flex: 1 0 auto;
+            display: grid;
+            place-items: center;
+            padding: 72px 0;
+        }
+
+        .gateway {
+            width: min(100%, 440px);
+        }
+
+        .kicker {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0 0 22px;
+            color: var(--quiet);
+            font-family: "JetBrains Mono", monospace;
+            font-size: 11px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .kicker::before {
+            content: "";
+            width: 7px;
+            height: 7px;
+            background: var(--amber);
+        }
+
+        h1 {
+            margin: 0;
+            color: var(--fg);
+            font-family: "Instrument Serif", Georgia, serif;
+            font-size: clamp(44px, 10vw, 64px);
+            font-weight: 400;
+            line-height: 0.98;
+            letter-spacing: 0;
+        }
+
+        h1 em {
+            color: var(--fg);
+            font-style: italic;
+        }
+
+        .intro {
+            margin: 22px 0 34px;
+            max-width: 36rem;
+            color: var(--muted);
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        .panel {
+            border: 1px solid var(--border);
+            background: rgba(16, 17, 20, 0.88);
+            padding: 8px;
+        }
+
+        .access-list {
+            display: grid;
+            gap: 8px;
+        }
+
+        .access-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            min-height: 56px;
+            padding: 16px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--fg);
+            text-decoration: none;
+            transition: border-color 180ms ease, background 180ms ease, color 180ms ease;
+        }
+
+        .access-link:hover,
+        .access-link:focus-visible {
+            border-color: #3A3A3F;
+            background: #121317;
+            outline: none;
+        }
+
+        .access-link.primary {
+            border-color: #2A2B30;
+        }
+
+        .access-link.primary .arrow {
+            color: var(--amber);
+        }
+
+        .access-text {
+            display: grid;
+            gap: 5px;
+        }
+
+        .access-title {
+            color: var(--fg);
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0;
+        }
+
+        .access-meta {
+            color: var(--quiet);
+            font-family: "JetBrains Mono", monospace;
+            font-size: 10px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .arrow {
+            color: var(--quiet);
+            font-family: "JetBrains Mono", monospace;
+            font-size: 18px;
+            line-height: 1;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 2px;
+            color: var(--quiet);
+            font-family: "JetBrains Mono", monospace;
+            font-size: 10px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            height: 1px;
+            flex: 1;
+            background: var(--border);
+        }
+
+        footer {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 32px;
+            padding-top: 28px;
+            border-top: 1px solid var(--border);
+            color: var(--quiet);
+        }
+
+        .legal {
+            max-width: 560px;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .trust {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: 8px;
+            font-family: "JetBrains Mono", monospace;
+            font-size: 10px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .trust span {
+            border: 1px solid var(--border);
+            padding: 5px 7px;
+            color: var(--quiet);
+        }
+
+        @media (max-width: 720px) {
+            body {
+                padding: 24px 18px;
+                background-size: 48px 48px;
+            }
+
+            header,
+            footer {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .status {
+                display: none;
+            }
+
+            main {
+                place-items: start center;
+                padding: 74px 0 56px;
+            }
+
+            .trust {
+                justify-content: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="shell">
+        <div class="brand">
+            <span class="mark" aria-hidden="true"></span>
+            <span>LITUNA / DECISION INTELLIGENCE</span>
+        </div>
+        <div class="status">GATEWAY &middot; TLS-1.3 &middot; MTLS</div>
+    </header>
+
+    <main class="shell">
+        <section class="gateway" aria-labelledby="gateway-title">
+            <p class="kicker">Enterprise Gateway &middot; Restricted Access</p>
+            <h1 id="gateway-title">Acceso a <em>infraestructura operacional</em>.</h1>
+            <p class="intro">
+                Entorno restringido para pilotos integrados, monitoreo situacional y gobierno de decisiones bajo politica nominal.
+            </p>
+
+            <div class="panel">
+                <div class="access-list">
+                    <a href="https://pilot.tuempresa.io" class="access-link primary">
+                        <span class="access-text">
+                            <span class="access-title">Client Portal</span>
+                            <span class="access-meta">PILOT RUNTIME &middot; AUTH REQUIRED</span>
+                        </span>
+                        <span class="arrow" aria-hidden="true">&#8599;</span>
+                    </a>
+
+                    <div class="divider">Internal Control</div>
+
+                    <a href="https://pilot-console.tuempresa.io" class="access-link">
+                        <span class="access-text">
+                            <span class="access-title">Admin Console & Governance</span>
+                            <span class="access-meta">OPS CONSOLE &middot; CLOUDFLARE PROTECTED</span>
+                        </span>
+                        <span class="arrow" aria-hidden="true">&#8599;</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="shell">
+        <div class="legal">
+            &copy; Lituna 2026. Acceso restringido bajo politicas de confidencialidad NDA. Operational judgment infrastructure for institutions that cannot outsource consequence.
+        </div>
+        <div class="trust" aria-label="Security and governance posture">
+            <span>SOC 2 READY</span>
+            <span>ISO 42001 ALIGNED</span>
+            <span>AES-256</span>
+            <span>ISO 27001 AMBIT</span>
+        </div>
+    </footer>
+</body>
+</html>
