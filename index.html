@@ -242,42 +242,41 @@
             position: relative;
             z-index: 1;
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 32px;
+            flex-direction: column;
+            gap: 14px;
             padding-top: 28px;
             border-top: 1px solid var(--border);
             color: var(--quiet);
         }
 
+        .footer-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+        }
+
         .legal {
-            max-width: 560px;
             font-size: 12px;
             line-height: 1.6;
         }
 
-        .trust {
+        .trust-badges {
             display: flex;
-            flex-direction: column;
-            align-items: center;
+            flex-wrap: nowrap;
             gap: 8px;
             font-family: "JetBrains Mono", monospace;
             font-size: 10px;
             letter-spacing: 0.08em;
             text-transform: uppercase;
+            flex-shrink: 0;
         }
 
-        .trust-badges {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: flex-end;
-            gap: 8px;
-        }
-
-        .trust span {
+        .trust-badges span {
             border: 1px solid var(--border);
             padding: 5px 7px;
             color: var(--quiet);
+            white-space: nowrap;
         }
 
         .trust-tagline {
@@ -286,6 +285,7 @@
             color: var(--muted);
             text-align: center;
             text-transform: none;
+            line-height: 1.6;
         }
 
         .trust-link {
@@ -315,7 +315,7 @@
 
         @media (max-width: 720px) {
             body {
-                padding: 28px 18px 32px;
+                padding: 28px 18px 36px;
                 background-size: 48px 48px;
             }
 
@@ -329,22 +329,16 @@
 
             main {
                 place-items: start center;
-                padding: 56px 0 72px;
+                padding: 56px 0 64px;
             }
 
             footer {
+                gap: 20px;
+                padding-bottom: 4px;
+            }
+
+            .footer-top {
                 flex-direction: column;
-                align-items: flex-start;
-                gap: 24px;
-                padding-top: 28px;
-            }
-
-            .legal {
-                max-width: 100%;
-            }
-
-            .trust {
-                width: 100%;
                 align-items: flex-start;
                 gap: 16px;
             }
@@ -352,18 +346,19 @@
             .trust-badges {
                 display: grid;
                 grid-template-columns: repeat(2, minmax(0, 1fr));
-                justify-content: unset;
+                flex-wrap: unset;
+                flex-shrink: unset;
                 width: 100%;
             }
 
-            .trust span {
+            .trust-badges span {
                 text-align: center;
                 padding: 8px 6px;
+                white-space: normal;
             }
 
             .trust-tagline {
                 text-align: left;
-                max-width: 100%;
                 line-height: 1.7;
             }
 
@@ -422,18 +417,18 @@
     </main>
 
     <footer class="shell">
-        <div class="legal">
-            &copy; Lituna 2026. Restricted access under confidentiality and non-disclosure obligations.
-        </div>
-        <div class="trust" aria-label="Security and governance posture">
-            <div class="trust-badges">
+        <div class="footer-top">
+            <div class="legal">
+                &copy; Lituna 2026. Restricted access under confidentiality obligations.
+            </div>
+            <div class="trust-badges" aria-label="Security and governance posture">
                 <span>SOC 2 READY</span>
                 <span>ISO 42001 ALIGNED</span>
                 <span>AES-256</span>
                 <span>ISO 27001 SCOPE-READY</span>
             </div>
-            <div class="trust-tagline">Operational judgment infrastructure for institutions that cannot outsource consequence.</div>
         </div>
+        <div class="trust-tagline">Operational judgment infrastructure for institutions that cannot outsource consequence.</div>
     </footer>
 </body>
 </html>
