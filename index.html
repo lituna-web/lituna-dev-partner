@@ -288,6 +288,31 @@
             text-transform: none;
         }
 
+        .trust-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 16px;
+            text-decoration: none;
+            font-family: "JetBrains Mono", monospace;
+            font-size: 10px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--quiet);
+            transition: color 180ms ease;
+        }
+
+        .trust-link:hover {
+            color: var(--muted);
+        }
+
+        .trust-link-arrow {
+            color: var(--amber);
+            font-size: 13px;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+
         @media (max-width: 720px) {
             body {
                 padding: 28px 18px 32px;
@@ -341,6 +366,12 @@
                 max-width: 100%;
                 line-height: 1.7;
             }
+
+            .trust-link {
+                margin-top: 20px;
+                flex-wrap: wrap;
+                gap: 6px;
+            }
         }
     </style>
 </head>
@@ -380,17 +411,13 @@
                         <span class="arrow" aria-hidden="true">&#8599;</span>
                     </a>
 
-                    <div class="divider">Trust & Compliance</div>
-
-                    <a href="#" class="access-link">
-                        <span class="access-text">
-                            <span class="access-title">Trust Center</span>
-                            <span class="access-meta">SECURITY POSTURE &middot; PUBLIC ACCESS</span>
-                        </span>
-                        <span class="arrow" aria-hidden="true">&#8599;</span>
-                    </a>
                 </div>
             </div>
+
+            <a href="https://lituna.com/trust-center" class="trust-link" target="_blank" rel="noopener noreferrer">
+                <span class="trust-link-label">TRUST &amp; COMPLIANCE &middot; View Trust Center</span>
+                <span class="trust-link-arrow" aria-hidden="true">&#8599;</span>
+            </a>
         </section>
     </main>
 
