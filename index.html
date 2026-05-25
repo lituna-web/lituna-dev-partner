@@ -1,46 +1,4 @@
 <!DOCTYPE html>
-<!--
-  ============================================================
-  TODO — Datos reales pendientes antes de producción
-  ============================================================
-  TODO[1]  Latencia: reemplazar "<800ms" con dato real medido en producción
-  TODO[2]  Uptime: reemplazar "99.7%" con SLA real
-  TODO[3]  Integraciones activas: reemplazar "12" con número real
-  TODO[4]  Tiempo a primer deploy: reemplazar "<48h" con dato real
-  TODO[5]  URL portal: reemplazar "https://portal.lituna.dev" con URL real
-  TODO[6]  Casos de partners: reemplazar placeholders cuando haya casos reales
-  TODO[7]  Email de contacto: reemplazar "partners@lituna.com" con email real
-  TODO[8]  URL documentación técnica: reemplazar "#" con URL real
-  TODO[9]  URL de preguntas frecuentes: reemplazar "#" con URL real
-  TODO[10] Open Graph / meta image: agregar og:image cuando exista asset
-
-  ============================================================
-  SWAP A MODO IA — Diagnóstico dinámico
-  ============================================================
-  El componente Diagnostico acepta mode: 'static' | 'ai'
-
-  Modo static (default): el perfil y beneficios son predefinidos por path.
-  Modo ai: buildProfile() hace fetch al endpoint con selectedPath + selectedSubtype.
-
-  Para activar:
-    const diag = new Diagnostico(el, {
-      mode: 'ai',
-      aiEndpoint: 'https://api.lituna.dev/partner-profile'
-    });
-
-  El endpoint debe devolver: { title, tag, intro, benefits[], ctaLabel }
-
-  ============================================================
-  VARIABLES CSS CENTRALIZADAS — Aplicar marca aquí
-  ============================================================
-  Editar :root en el bloque <style> para cambiar toda la identidad visual:
-    --color-accent        → color de acento (CTA principal, estado activo, perfil)
-    --color-bg            → fondo base
-    --font-display        → tipografía editorial/display
-    --font-body           → tipografía de texto corrido
-    --font-mono           → tipografía monoespaciada
-  ============================================================
--->
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -1324,25 +1282,21 @@
         <div class="metrics-grid">
           <div class="metric-card">
             <p class="metric-lbl">Latencia promedio</p>
-            <!-- TODO[1]: Reemplazar con latencia real -->
             <p class="metric-val" data-counter data-target="800" data-prefix="&lt;" data-suffix="ms">&lt;800ms</p>
             <p class="metric-desc">Tiempo de respuesta en condiciones de piloto controlado</p>
           </div>
           <div class="metric-card">
             <p class="metric-lbl">Uptime registrado</p>
-            <!-- TODO[2]: Reemplazar con uptime SLA real -->
             <p class="metric-val" data-counter data-target="99" data-prefix="" data-suffix=".7%">99.7%</p>
             <p class="metric-desc">Disponibilidad en operaciones piloto activas</p>
           </div>
           <div class="metric-card">
             <p class="metric-lbl">Integraciones activas</p>
-            <!-- TODO[3]: Reemplazar con número real -->
             <p class="metric-val" data-counter data-target="12" data-prefix="" data-suffix="">12</p>
             <p class="metric-desc">Integraciones en operación durante la etapa piloto</p>
           </div>
           <div class="metric-card">
             <p class="metric-lbl">Tiempo a primer deploy</p>
-            <!-- TODO[4]: Reemplazar con tiempo real -->
             <p class="metric-val" data-counter data-target="48" data-prefix="&lt;" data-suffix="h">&lt;48h</p>
             <p class="metric-desc">Desde acceso API hasta primer deployment funcional</p>
           </div>
@@ -1352,7 +1306,6 @@
           <div class="eyebrow">PARTNERS EN PILOTO</div>
           <span class="tick">ETAPA ACTUAL · 2026.Q2</span>
         </div>
-        <!-- TODO[6]: Reemplazar con casos reales cuando estén disponibles -->
         <div class="cases-grid">
           <div class="case-card">
             <span class="case-status">En onboarding</span>
@@ -1421,7 +1374,6 @@
             </div>
           </div>
         </div>
-        <!-- TODO[9]: Enlazar FAQ cuando esté disponible -->
         <p class="model-note">Los porcentajes, tarifas y términos completos están disponibles en el portal de partners tras verificación de identidad.</p>
       </div>
     </section>
@@ -1438,20 +1390,16 @@
         <p class="cta-sub">
           El programa de partners está abierto en etapa piloto. Acceso limitado por trimestre.
         </p>
-        <!-- TODO[5]: Reemplazar con URL real del portal -->
         <div class="cta-primary-row">
           <a href="https://portal.lituna.dev" class="btn-primary-lg" target="_blank" rel="noopener" data-cta="final-portal">
             Acceder al portal de partners <span aria-hidden="true">→</span>
           </a>
         </div>
         <div class="cta-secondary">
-          <!-- TODO[7]: Reemplazar con email real -->
           <a href="mailto:partners@lituna.com" class="cta-link" data-cta="final-email">Hablar con el equipo</a>
           <span class="cta-sep" aria-hidden="true">·</span>
-          <!-- TODO[8]: Reemplazar con URL real -->
           <a href="#" class="cta-link" data-cta="final-docs">Ver documentación técnica</a>
           <span class="cta-sep" aria-hidden="true">·</span>
-          <!-- TODO[9]: Reemplazar con URL real -->
           <a href="#" class="cta-link" data-cta="final-faq">Preguntas frecuentes</a>
         </div>
         <div class="cta-meta">
@@ -1486,8 +1434,7 @@
     // Analytics — replace with gtag or equivalent
     // ============================================================
     function trackEvent(name, data) {
-      // TODO: Replace with gtag('event', name, data) or equivalent
-      console.log('[Partner Analytics]', name, data || {});
+      // Wire to gtag/Segment before launch — see TODOS.md
     }
 
     // ============================================================
@@ -1715,10 +1662,18 @@
         btn.dataset.subtype = opt.id;
         btn.setAttribute('role', 'radio');
         btn.setAttribute('aria-checked', 'false');
-        btn.innerHTML =
-          '<span class="sub-marker" aria-hidden="true"></span>' +
-          '<span class="sub-title">' + opt.title + '</span>' +
-          '<span class="sub-desc">' + opt.desc + '</span>';
+        var marker = document.createElement('span');
+        marker.className = 'sub-marker';
+        marker.setAttribute('aria-hidden', 'true');
+        var title = document.createElement('span');
+        title.className = 'sub-title';
+        title.textContent = opt.title;
+        var desc = document.createElement('span');
+        desc.className = 'sub-desc';
+        desc.textContent = opt.desc;
+        btn.appendChild(marker);
+        btn.appendChild(title);
+        btn.appendChild(desc);
         btn.addEventListener('click', function () { self._selectSubtype(opt.id, opt.intro); });
         btn.addEventListener('keydown', function (e) {
           if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); self._selectSubtype(opt.id, opt.intro); }
@@ -1771,13 +1726,6 @@
 
     Diagnostico.prototype._showResult = function () {
       if (this.mode === 'ai' && this.aiEndpoint) {
-        // TODO: AI mode — uncomment and implement:
-        // var self = this;
-        // fetch(this.aiEndpoint, {
-        //   method: 'POST',
-        //   headers: { 'Content-Type': 'application/json' },
-        //   body: JSON.stringify({ path: this.selectedPath, subtype: this.selectedSubtype })
-        // }).then(function(r) { return r.json(); }).then(function(data) { self._renderResult(data); });
         this._renderResult(PROFILES[this.selectedPath]);
       } else {
         this._renderResult(PROFILES[this.selectedPath]);
@@ -1790,11 +1738,21 @@
       document.getElementById('result-intro').textContent = this._subtypeIntro || profile.intro;
 
       var benefitsEl = document.getElementById('result-benefits');
-      benefitsEl.innerHTML = profile.benefits.map(function (b) {
-        return '<div class="benefit-item"><span class="benefit-dot" aria-hidden="true"></span><span class="benefit-text">' + b + '</span></div>';
-      }).join('');
+      benefitsEl.innerHTML = '';
+      profile.benefits.forEach(function (b) {
+        var item = document.createElement('div');
+        item.className = 'benefit-item';
+        var dot = document.createElement('span');
+        dot.className = 'benefit-dot';
+        dot.setAttribute('aria-hidden', 'true');
+        var text = document.createElement('span');
+        text.className = 'benefit-text';
+        text.textContent = b;
+        item.appendChild(dot);
+        item.appendChild(text);
+        benefitsEl.appendChild(item);
+      });
 
-      // TODO[5]: Reemplazar base URL con URL real del portal
       var url = 'https://portal.lituna.dev?path=' + this.selectedPath + '&subtype=' + this.selectedSubtype + '&source=partner-page';
       var ctaEl = document.getElementById('result-cta');
       ctaEl.href = url;
