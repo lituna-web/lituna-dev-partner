@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>404 · Partner Program / Lituna</title>
+  <link rel="icon" type="image/svg+xml" href="lituna-favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:     #0A0A0B;
+      --border: #1F2024;
+      --grid:   #1A1B1F;
+      --fg:     #E8E8EA;
+      --muted:  #8A8A92;
+      --quiet:  #5A5A60;
+      --amber:  #D97706;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: "DM Sans", system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 32px;
+      background:
+        linear-gradient(var(--grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+        var(--bg);
+      background-size: 72px 72px;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: 240px;
+      background: linear-gradient(to bottom, transparent, var(--bg) 80%);
+      pointer-events: none;
+    }
+
+    .shell { width: min(100%, 1120px); margin: 0 auto; }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brand img { height: 22px; width: auto; display: block; }
+
+    .badge {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--quiet);
+      border: 1px solid var(--border);
+      padding: 4px 10px;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      padding: 80px 0;
+    }
+
+    .content { max-width: 760px; }
+
+    .eyebrow {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--quiet);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 32px;
+    }
+
+    .eyebrow::before {
+      content: "";
+      display: block;
+      width: 6px; height: 6px;
+      background: var(--amber);
+      flex-shrink: 0;
+    }
+
+    .null-label {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-family: "Newsreader", Georgia, serif;
+      font-size: clamp(40px, 6vw, 68px);
+      line-height: 1.05;
+      letter-spacing: -0.025em;
+      font-weight: 300;
+      color: var(--fg);
+      margin-bottom: 28px;
+    }
+
+    h1 em { font-style: italic; color: var(--muted); }
+
+    p {
+      font-size: 15px;
+      line-height: 1.65;
+      color: var(--muted);
+      max-width: 520px;
+      margin-bottom: 48px;
+    }
+
+    .actions { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--amber);
+      color: var(--bg);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 0 20px;
+      height: 40px;
+      border-radius: 2px;
+      transition: opacity 0.15s;
+    }
+
+    .btn-primary:hover { opacity: 0.85; }
+
+    .btn-secondary {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .btn-secondary:hover { color: var(--fg); }
+
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin-top: 64px;
+    }
+
+    footer {
+      padding-top: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid var(--border);
+    }
+
+    .tick {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--quiet);
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <a href="https://partner.lituna.dev" class="brand" aria-label="Lituna — Partner Program">
+        <img src="lituna-lockup.svg" alt="Lituna">
+      </a>
+      <span class="badge">Partner Program · Abierto</span>
+    </header>
+
+    <main>
+      <div class="content">
+        <div class="eyebrow">PARTNER PROGRAM // DECISION OS: 404</div>
+        <div class="null-label">NULL</div>
+        <h1>Recurso <em>fuera del programa.</em></h1>
+        <p>
+          La dirección solicitada no existe dentro del Partner Program de Decision OS.
+          Este espacio está reservado para integradores, consultoras y proyectos invitados.
+          Regresa al inicio para explorar las rutas disponibles.
+        </p>
+        <div class="actions">
+          <a href="https://partner.lituna.dev" class="btn-primary">← Volver al programa</a>
+          <a href="https://www.lituna.com" class="btn-secondary">Lituna.com →</a>
+        </div>
+        <hr class="divider">
+      </div>
+    </main>
+
+    <footer>
+      <span class="tick">© LITUNA 2026</span>
+      <span class="tick">PARTNER PROGRAM · DECISION OS</span>
+    </footer>
+  </div>
+</body>
+</html>
