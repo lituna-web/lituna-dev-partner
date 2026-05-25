@@ -1,434 +1,1894 @@
 <!DOCTYPE html>
-<html lang="en">
+<!--
+  ============================================================
+  TODO — Datos reales pendientes antes de producción
+  ============================================================
+  TODO[1]  Latencia: reemplazar "<800ms" con dato real medido en producción
+  TODO[2]  Uptime: reemplazar "99.7%" con SLA real
+  TODO[3]  Integraciones activas: reemplazar "12" con número real
+  TODO[4]  Tiempo a primer deploy: reemplazar "<48h" con dato real
+  TODO[5]  URL portal: reemplazar "https://portal.lituna.dev" con URL real
+  TODO[6]  Casos de partners: reemplazar placeholders cuando haya casos reales
+  TODO[7]  Email de contacto: reemplazar "partners@lituna.com" con email real
+  TODO[8]  URL documentación técnica: reemplazar "#" con URL real
+  TODO[9]  URL de preguntas frecuentes: reemplazar "#" con URL real
+  TODO[10] Open Graph / meta image: agregar og:image cuando exista asset
+
+  ============================================================
+  SWAP A MODO IA — Diagnóstico dinámico
+  ============================================================
+  El componente Diagnostico acepta mode: 'static' | 'ai'
+
+  Modo static (default): el perfil y beneficios son predefinidos por path.
+  Modo ai: buildProfile() hace fetch al endpoint con selectedPath + selectedSubtype.
+
+  Para activar:
+    const diag = new Diagnostico(el, {
+      mode: 'ai',
+      aiEndpoint: 'https://api.lituna.dev/partner-profile'
+    });
+
+  El endpoint debe devolver: { title, tag, intro, benefits[], ctaLabel }
+
+  ============================================================
+  VARIABLES CSS CENTRALIZADAS — Aplicar marca aquí
+  ============================================================
+  Editar :root en el bloque <style> para cambiar toda la identidad visual:
+    --color-accent        → color de acento (CTA principal, estado activo, perfil)
+    --color-bg            → fondo base
+    --font-display        → tipografía editorial/display
+    --font-body           → tipografía de texto corrido
+    --font-mono           → tipografía monoespaciada
+  ============================================================
+-->
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="google" content="notranslate">
-    <title>Enterprise Gateway | Lituna</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/svg+xml" href="lituna-favicon.svg">
-    <style>
-        :root {
-            --bg: #0A0A0B;
-            --card: #101114;
-            --border: #1F2024;
-            --grid: #1A1B1F;
-            --fg: #E8E8EA;
-            --muted: #8A8A92;
-            --quiet: #5A5A60;
-            --amber: #D97706;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Partner Program · Decision OS / Lituna</title>
+  <meta name="description" content="Integra capacidades de IA autónoma en tu producto, consultoría o proyecto. Partner Program de Decision OS / Lituna.">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/svg+xml" href="lituna-favicon.svg">
 
-        * {
-            box-sizing: border-box;
-        }
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-        html {
-            min-height: 100%;
-            background: var(--bg);
-            color: var(--fg);
-            font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        }
+  <style>
+    /* ============================================================
+       CSS Variables — Edit here to apply brand
+       ============================================================ */
+    :root {
+      --color-bg:           #0A0A0B;
+      --color-bg-elevated:  #111113;
+      --color-surface:      #15151A;
+      --color-surface-hover:#1A1A1F;
+      --color-border:       #1F2024;
+      --color-border-faint: #17171A;
 
-        body {
-            position: relative;
-            min-height: 100vh;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            padding: 32px;
-            background:
-                linear-gradient(var(--grid) 1px, transparent 1px),
-                linear-gradient(90deg, var(--grid) 1px, transparent 1px),
-                var(--bg);
-            background-size: 72px 72px;
-            background-position: center top;
-            color: var(--fg);
-            -webkit-font-smoothing: antialiased;
-            text-rendering: geometricPrecision;
-        }
+      --color-accent:       #D97706;
+      --color-accent-hover: #B45309;
+      --color-accent-muted: rgba(217, 119, 6, 0.10);
 
-        body::after {
-            content: "";
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 200px;
-            background: linear-gradient(to bottom, transparent, var(--bg) 75%);
-            pointer-events: none;
-            z-index: 0;
-        }
+      --color-text-primary:   #E8E8EA;
+      --color-text-secondary: #8A8A92;
+      --color-text-muted:     #5A5A60;
 
-        ::selection {
-            background: var(--amber);
-            color: var(--bg);
-        }
+      --font-display: 'Newsreader', Georgia, serif;
+      --font-body:    'DM Sans', system-ui, sans-serif;
+      --font-mono:    'JetBrains Mono', 'Courier New', monospace;
 
-        .shell {
-            width: min(100%, 1120px);
-            margin: 0 auto;
-        }
+      --max-width: 1320px;
+      --px:        32px;
 
-        header,
-        footer {
-            flex: 0 0 auto;
-        }
+      --ease-base: 150ms ease;
+      --ease-slow: 300ms ease;
+    }
 
-        header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 24px;
-        }
+    /* ============================================================
+       Reset
+       ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        .brand img {
-            height: 22px;
-            width: auto;
-            display: block;
-        }
+    html { scroll-behavior: smooth; }
 
-        .status {
-            color: var(--quiet);
-            font-family: "JetBrains Mono", monospace;
-            font-size: 11px;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-        }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
 
-        main {
-            flex: 1 0 auto;
-            display: grid;
-            place-items: center;
-            padding: 72px 0;
-        }
+    body {
+      background: var(--color-bg);
+      color: var(--color-text-primary);
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
 
-        .gateway {
-            width: min(100%, 440px);
-        }
+    a { color: inherit; text-decoration: none; }
+    button { cursor: pointer; border: none; background: none; font: inherit; color: inherit; }
+    img, svg { display: block; max-width: 100%; }
 
-        .kicker {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin: 0 0 22px;
-            color: var(--quiet);
-            font-family: "JetBrains Mono", monospace;
-            font-size: 11px;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-        }
+    /* ============================================================
+       Utilities
+       ============================================================ */
+    .container {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 0 var(--px);
+    }
 
-        .kicker::before {
-            content: "";
-            width: 7px;
-            height: 7px;
-            background: var(--amber);
-        }
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .eyebrow::before {
+      content: '';
+      display: block;
+      width: 6px;
+      height: 6px;
+      background: var(--color-accent);
+      flex-shrink: 0;
+    }
 
-        h1 {
-            margin: 0;
-            color: var(--fg);
-            font-family: "Instrument Serif", Georgia, serif;
-            font-size: clamp(24px, 5vw, 40px);
-            font-weight: 400;
-            line-height: 0.98;
-            letter-spacing: 0;
-        }
+    .tick {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+    }
 
-        h1 em {
-            color: var(--fg);
-            font-style: italic;
-        }
+    .hl-b { border-bottom: 1px solid var(--color-border); }
+    .hl-t { border-top: 1px solid var(--color-border); }
 
-        .intro {
-            margin: 22px 0 34px;
-            max-width: 36rem;
-            color: var(--muted);
-            font-size: 15px;
-            line-height: 1.7;
-        }
+    /* ============================================================
+       Navigation
+       ============================================================ */
+    #nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      transition: background var(--ease-slow), border-color var(--ease-slow);
+      border-bottom: 1px solid transparent;
+    }
+    #nav.scrolled {
+      background: rgba(10, 10, 11, 0.96);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-color: var(--color-border);
+    }
 
-        .panel {
-            border: 1px solid var(--border);
-            background: rgba(16, 17, 20, 0.88);
-            padding: 8px;
-        }
+    .nav-inner {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 0 var(--px);
+      height: 64px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
 
-        .access-list {
-            display: grid;
-            gap: 8px;
-        }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+      text-decoration: none;
+    }
 
-        .access-link {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 18px;
-            min-height: 56px;
-            padding: 16px;
-            border: 1px solid var(--border);
-            background: var(--bg);
-            color: var(--fg);
-            text-decoration: none;
-            transition: border-color 180ms ease, background 180ms ease, color 180ms ease;
-        }
+    .nav-badge {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--color-accent);
+      border: 1px solid rgba(217, 119, 6, 0.3);
+      padding: 3px 10px;
+      flex-shrink: 0;
+    }
 
-        .access-link:hover,
-        .access-link:focus-visible {
-            border-color: #3A3A3F;
-            background: #121317;
-            outline: none;
-        }
+    .nav-spacer { flex: 1; }
 
-        .access-link.primary {
-            border-color: #2A2B30;
-        }
+    .nav-cta {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--color-text-secondary);
+      transition: color var(--ease-base);
+    }
+    .nav-cta:hover { color: var(--color-text-primary); }
 
-        .access-link.primary .arrow {
-            color: var(--amber);
-        }
+    /* ============================================================
+       Hero
+       ============================================================ */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      border-bottom: 1px solid var(--color-border);
+      padding: 80px 0 64px;
+    }
 
-        .access-text {
-            display: grid;
-            gap: 5px;
-        }
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(31,32,36,0.5) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(31,32,36,0.5) 1px, transparent 1px);
+      background-size: 80px 80px;
+      pointer-events: none;
+    }
 
-        .access-title {
-            color: var(--fg);
-            font-size: 14px;
-            font-weight: 600;
-            letter-spacing: 0;
-        }
+    .hero-inner { position: relative; z-index: 1; }
 
-        .access-meta {
-            color: var(--quiet);
-            font-family: "JetBrains Mono", monospace;
-            font-size: 10px;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-        }
+    .hero-eyebrow { margin-bottom: 40px; }
 
-        .arrow {
-            color: var(--quiet);
-            font-family: "JetBrains Mono", monospace;
-            font-size: 18px;
-            line-height: 1;
-        }
+    .hero-h1 {
+      font-family: var(--font-display);
+      font-size: clamp(40px, 5.2vw, 68px);
+      font-weight: 400;
+      line-height: 0.98;
+      letter-spacing: -0.025em;
+      color: var(--color-text-primary);
+      max-width: 780px;
+      margin-bottom: 28px;
+    }
+    .hero-h1 em {
+      font-style: italic;
+      color: var(--color-text-secondary);
+    }
 
-        .divider {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 2px;
-            color: var(--quiet);
-            font-family: "JetBrains Mono", monospace;
-            font-size: 10px;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-        }
+    .hero-sub {
+      font-size: 16px;
+      line-height: 1.65;
+      color: rgba(232, 232, 234, 0.68);
+      max-width: 520px;
+      margin-bottom: 48px;
+    }
 
-        .divider::before,
-        .divider::after {
-            content: "";
-            height: 1px;
-            flex: 1;
-            background: var(--border);
-        }
+    .hero-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 52px;
+    }
 
-        footer {
-            position: relative;
-            z-index: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-            padding-top: 28px;
-            border-top: 1px solid var(--border);
-            color: var(--quiet);
-        }
+    .chip {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border: 1px solid var(--color-border);
+      padding: 10px 20px;
+      color: var(--color-text-secondary);
+      background: transparent;
+      transition: border-color var(--ease-base), color var(--ease-base), background var(--ease-base);
+    }
+    .chip:hover {
+      border-color: var(--color-text-muted);
+      color: var(--color-text-primary);
+    }
+    .chip:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 2px;
+    }
+    .chip.chip--active {
+      border-color: var(--color-accent);
+      color: var(--color-accent);
+      background: var(--color-accent-muted);
+    }
 
-        .footer-top {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 24px;
-        }
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 24px;
+      padding-top: 24px;
+      border-top: 1px solid var(--color-border);
+      max-width: 780px;
+    }
 
-        .legal {
-            font-size: 12px;
-            line-height: 1.6;
-        }
+    /* ============================================================
+       Sections — shared
+       ============================================================ */
+    .section {
+      padding: 80px 0;
+      border-bottom: 1px solid var(--color-border);
+      position: relative;
+    }
+    .section-lg { padding: 112px 0; }
 
-        .trust-badges {
-            display: flex;
-            flex-wrap: nowrap;
-            gap: 8px;
-            font-family: "JetBrains Mono", monospace;
-            font-size: 10px;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            flex-shrink: 0;
-        }
+    .section-eyebrow { margin-bottom: 24px; }
 
-        .trust-badges span {
-            border: 1px solid var(--border);
-            padding: 5px 7px;
-            color: var(--quiet);
-            white-space: nowrap;
-        }
+    .section-h2 {
+      font-family: var(--font-display);
+      font-size: clamp(32px, 3.5vw, 52px);
+      font-weight: 400;
+      line-height: 1.0;
+      letter-spacing: -0.025em;
+      color: var(--color-text-primary);
+    }
+    .section-h2 span {
+      display: block;
+      color: var(--color-text-secondary);
+    }
 
-        .trust-tagline {
-            font-size: 11px;
-            letter-spacing: 0.04em;
-            color: var(--muted);
-            text-align: center;
-            text-transform: none;
-            line-height: 1.6;
-        }
+    .section-lead {
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--color-text-secondary);
+      max-width: 560px;
+      margin-top: 16px;
+    }
 
-        .trust-link {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 16px;
-            text-decoration: none;
-            font-family: "JetBrains Mono", monospace;
-            font-size: 10px;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            color: var(--quiet);
-            transition: color 180ms ease;
-        }
+    /* ============================================================
+       Diagnóstico
+       ============================================================ */
+    #diagnostico {
+      padding: 80px 0 0;
+      border-bottom: 1px solid var(--color-border);
+    }
 
-        .trust-link:hover {
-            color: var(--muted);
-        }
+    .diag-intro {
+      margin-bottom: 48px;
+      max-width: 640px;
+    }
+    .diag-intro-text {
+      font-size: 15px;
+      color: var(--color-text-secondary);
+      margin-top: 16px;
+      line-height: 1.65;
+    }
 
-        .trust-link-arrow {
-            color: var(--amber);
-            font-size: 13px;
-            line-height: 1;
-            flex-shrink: 0;
-        }
+    /* Steps */
+    .diag-step {
+      display: none;
+      animation: fadeUp 0.35s ease;
+    }
+    .diag-step.active { display: block; }
 
-        @media (max-width: 720px) {
-            body {
-                padding: 28px 18px 36px;
-                background-size: 48px 48px;
-            }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
 
-            header {
-                align-items: flex-start;
-            }
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 28px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .step-num {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+    }
+    .step-lbl {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      color: var(--color-text-secondary);
+    }
 
-            .status {
-                display: none;
-            }
+    /* Path cards */
+    .path-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--color-border);
+      margin-bottom: 24px;
+    }
 
-            main {
-                place-items: start center;
-                padding: 56px 0 64px;
-            }
+    .path-card {
+      background: var(--color-bg);
+      padding: 32px 28px;
+      cursor: pointer;
+      transition: background var(--ease-base), opacity var(--ease-slow);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      text-align: left;
+      color: inherit;
+    }
+    .path-card:hover { background: var(--color-surface-hover); }
+    .path-card:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: -2px;
+    }
+    .path-card.inactive { opacity: 0.32; pointer-events: none; }
+    .path-card.selected { background: var(--color-surface); }
 
-            footer {
-                gap: 20px;
-                padding-bottom: 4px;
-            }
+    .card-id {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card-id::before {
+      content: '';
+      display: block;
+      width: 6px; height: 6px;
+      background: var(--color-border);
+      flex-shrink: 0;
+      transition: background var(--ease-base);
+    }
+    .path-card.selected .card-id::before { background: var(--color-accent); }
 
-            .footer-top {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 16px;
-            }
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 400;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      color: var(--color-text-primary);
+    }
+    .card-desc {
+      font-size: 13px;
+      line-height: 1.65;
+      color: var(--color-text-secondary);
+      flex: 1;
+    }
+    .card-cue {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+      margin-top: auto;
+      transition: color var(--ease-base);
+    }
+    .path-card.selected .card-cue { color: var(--color-accent); }
 
-            .trust-badges {
-                display: grid;
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-                flex-wrap: unset;
-                flex-shrink: unset;
-                width: 100%;
-            }
+    /* Continue button */
+    .step-continue {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--ease-slow);
+      display: flex;
+      justify-content: flex-end;
+      padding: 16px 0 20px;
+    }
+    .step-continue.visible { opacity: 1; pointer-events: all; }
 
-            .trust-badges span {
-                text-align: center;
-                padding: 8px 6px;
-                white-space: normal;
-            }
+    .btn-continue {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      background: var(--color-accent);
+      color: #fff;
+      padding: 12px 28px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: background var(--ease-base);
+    }
+    .btn-continue:hover { background: var(--color-accent-hover); }
 
-            .trust-tagline {
-                text-align: left;
-                line-height: 1.7;
-            }
+    /* Subtype cards */
+    .subtype-question {
+      font-size: 14px;
+      color: var(--color-text-secondary);
+      margin-bottom: 20px;
+    }
 
-            .trust-link {
-                margin-top: 20px;
-                flex-wrap: wrap;
-                gap: 6px;
-            }
-        }
-    </style>
+    .subtype-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--color-border);
+      margin-bottom: 24px;
+    }
+
+    .subtype-card {
+      background: var(--color-bg);
+      padding: 24px;
+      cursor: pointer;
+      transition: background var(--ease-base), opacity var(--ease-slow);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      text-align: left;
+      color: inherit;
+    }
+    .subtype-card:hover { background: var(--color-surface-hover); }
+    .subtype-card.selected { background: var(--color-surface); }
+    .subtype-card.inactive { opacity: 0.32; pointer-events: none; }
+    .subtype-card:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: -2px;
+    }
+
+    .sub-marker {
+      width: 6px; height: 6px;
+      background: var(--color-border);
+      flex-shrink: 0;
+      transition: background var(--ease-base);
+    }
+    .subtype-card.selected .sub-marker { background: var(--color-accent); }
+
+    .sub-title {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 400;
+      line-height: 1.2;
+      color: var(--color-text-primary);
+    }
+    .sub-desc {
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--color-text-secondary);
+    }
+
+    /* Profile building */
+    #profile-building {
+      display: none;
+      padding: 64px 0;
+      animation: fadeUp 0.3s ease;
+    }
+    #profile-building.active { display: block; }
+
+    .build-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+      margin-bottom: 20px;
+    }
+
+    .build-bar {
+      width: 280px;
+      height: 2px;
+      background: var(--color-border);
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .build-bar-fill {
+      height: 100%;
+      background: var(--color-accent);
+      width: 0%;
+      transition: width 1.5s ease-out;
+    }
+
+    .build-steps {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .build-step {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+      opacity: 0;
+      transition: opacity 0.3s ease, color 0.3s ease;
+    }
+    .build-step.done { opacity: 1; color: var(--color-text-secondary); }
+
+    /* Profile result */
+    #profile-result {
+      display: none;
+      padding: 0 0 64px;
+      animation: fadeUp 0.5s ease;
+    }
+    #profile-result.active { display: block; }
+
+    .profile-card {
+      border: 1px solid var(--color-accent);
+      background: var(--color-surface);
+      padding: 40px;
+    }
+
+    .profile-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--color-border);
+      padding-bottom: 24px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .profile-lbl {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--color-accent);
+      margin-bottom: 8px;
+    }
+    .profile-title {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 400;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: var(--color-text-primary);
+    }
+    .profile-tag {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border: 1px solid rgba(217,119,6,0.35);
+      color: var(--color-accent);
+      padding: 4px 10px;
+      align-self: flex-start;
+    }
+
+    .profile-intro {
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--color-text-secondary);
+      margin-bottom: 28px;
+      max-width: 600px;
+    }
+
+    .profile-benefits {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 10px;
+      margin-bottom: 32px;
+    }
+
+    .benefit-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 16px;
+      background: rgba(255,255,255,0.018);
+      border: 1px solid var(--color-border);
+    }
+    .benefit-dot {
+      width: 4px; height: 4px;
+      background: var(--color-accent);
+      flex-shrink: 0;
+      margin-top: 8px;
+    }
+    .benefit-text {
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--color-text-secondary);
+    }
+
+    .profile-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--color-accent);
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0 28px;
+      height: 48px;
+      transition: background var(--ease-base);
+      text-decoration: none;
+    }
+    .btn-primary:hover { background: var(--color-accent-hover); }
+
+    .btn-outlined {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--color-border);
+      color: var(--color-text-secondary);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0 20px;
+      height: 48px;
+      transition: border-color var(--ease-base), color var(--ease-base);
+      text-decoration: none;
+    }
+    .btn-outlined:hover {
+      border-color: var(--color-text-muted);
+      color: var(--color-text-primary);
+    }
+
+    .btn-reset {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      transition: color var(--ease-base);
+    }
+    .btn-reset:hover { color: var(--color-text-secondary); }
+
+    /* ============================================================
+       Platform (S3)
+       ============================================================ */
+    .platform-grid {
+      display: grid;
+      grid-template-columns: 5fr 7fr;
+      gap: 80px;
+      align-items: start;
+    }
+
+    .platform-sticky {
+      position: sticky;
+      top: 88px;
+    }
+
+    .platform-point {
+      padding: 24px 0;
+      border-bottom: 1px solid var(--color-border);
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      gap: 24px;
+    }
+    .platform-point:first-child { border-top: 1px solid var(--color-border); }
+
+    .pp-id {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+      padding-top: 3px;
+    }
+    .pp-title {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 400;
+      letter-spacing: -0.01em;
+      color: var(--color-text-primary);
+      margin-bottom: 8px;
+    }
+    .pp-desc {
+      font-size: 13.5px;
+      line-height: 1.7;
+      color: var(--color-text-secondary);
+    }
+
+    /* ============================================================
+       Metrics (S4)
+       ============================================================ */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--color-border);
+      border: 1px solid var(--color-border);
+      margin-bottom: 64px;
+    }
+
+    .metric-card {
+      background: var(--color-bg);
+      padding: 32px 28px;
+    }
+    .metric-lbl {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+      margin-bottom: 16px;
+    }
+    .metric-val {
+      font-family: var(--font-mono);
+      font-size: 36px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+      line-height: 1;
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+    .metric-desc {
+      font-size: 12px;
+      color: var(--color-text-muted);
+      line-height: 1.5;
+    }
+
+    .cases-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--color-border);
+      padding-bottom: 20px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .cases-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--color-border);
+    }
+
+    .case-card {
+      background: var(--color-bg);
+      padding: 28px;
+    }
+    .case-status {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+      border: 1px solid var(--color-border);
+      padding: 3px 8px;
+      display: inline-block;
+      margin-bottom: 20px;
+    }
+    .case-ctx {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--color-accent);
+      margin-bottom: 10px;
+    }
+    .case-title {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 400;
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+      color: var(--color-text-primary);
+      margin-bottom: 10px;
+    }
+    .case-desc {
+      font-size: 13px;
+      line-height: 1.65;
+      color: var(--color-text-secondary);
+    }
+
+    /* ============================================================
+       Model (S5)
+       ============================================================ */
+    .model-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--color-border);
+      border: 1px solid var(--color-border);
+      margin-bottom: 32px;
+    }
+
+    .model-card {
+      background: var(--color-bg);
+      padding: 32px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .mc-id {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .mc-id::before {
+      content: '';
+      width: 6px; height: 6px;
+      background: var(--color-accent);
+    }
+    .mc-title {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 400;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      color: var(--color-text-primary);
+    }
+    .mc-desc {
+      font-size: 13.5px;
+      line-height: 1.7;
+      color: var(--color-text-secondary);
+      flex: 1;
+    }
+    .mc-terms {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      border-top: 1px solid var(--color-border);
+      padding-top: 16px;
+      margin-top: 4px;
+    }
+    .mc-term {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .mc-term::before {
+      content: '';
+      width: 3px; height: 3px;
+      background: var(--color-text-muted);
+    }
+
+    .model-note {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+      text-align: center;
+      padding: 16px;
+      border: 1px solid var(--color-border);
+    }
+
+    /* ============================================================
+       CTA Final
+       ============================================================ */
+    #cta-final {
+      padding: 112px 0;
+      text-align: center;
+    }
+
+    .cta-eyebrow { margin-bottom: 40px; justify-content: center; }
+
+    .cta-h2 {
+      font-family: var(--font-display);
+      font-size: clamp(36px, 4.2vw, 60px);
+      font-weight: 400;
+      line-height: 1.0;
+      letter-spacing: -0.025em;
+      color: var(--color-text-primary);
+      margin-bottom: 16px;
+    }
+    .cta-h2 em {
+      font-style: italic;
+      color: var(--color-text-secondary);
+    }
+
+    .cta-sub {
+      font-size: 15px;
+      color: var(--color-text-secondary);
+      max-width: 460px;
+      margin: 0 auto 36px;
+      line-height: 1.65;
+    }
+
+    .cta-primary-row {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .btn-primary-lg {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--color-accent);
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0 36px;
+      height: 52px;
+      transition: background var(--ease-base);
+      text-decoration: none;
+    }
+    .btn-primary-lg:hover { background: var(--color-accent-hover); }
+
+    .cta-secondary {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 6px 20px;
+    }
+    .cta-link {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      transition: color var(--ease-base);
+    }
+    .cta-link:hover { color: var(--color-text-secondary); }
+    .cta-sep { color: var(--color-text-muted); font-size: 10px; }
+
+    .cta-meta {
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid var(--color-border);
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+
+    /* ============================================================
+       Footer
+       ============================================================ */
+    footer {
+      border-top: 1px solid var(--color-border);
+      padding: 28px 0;
+    }
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .footer-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .footer-links {
+      display: flex;
+      gap: 24px;
+    }
+    .footer-link {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+      transition: color var(--ease-base);
+    }
+    .footer-link:hover { color: var(--color-text-secondary); }
+
+    /* ============================================================
+       Responsive
+       ============================================================ */
+    @media (max-width: 1280px) {
+      :root { --px: 24px; }
+      .platform-grid { grid-template-columns: 1fr 1fr; gap: 48px; }
+    }
+
+    @media (max-width: 768px) {
+      :root { --px: 20px; }
+
+      .hero-h1 { font-size: 36px; }
+
+      .path-cards  { grid-template-columns: 1fr; }
+      .subtype-cards { grid-template-columns: 1fr; }
+
+      .platform-grid { grid-template-columns: 1fr; }
+      .platform-sticky { position: static; }
+
+      .metrics-grid  { grid-template-columns: repeat(2, 1fr); }
+      .cases-grid    { grid-template-columns: 1fr; }
+      .model-grid    { grid-template-columns: 1fr; }
+
+      .profile-benefits { grid-template-columns: 1fr; }
+      .profile-card { padding: 24px; }
+
+      .cta-secondary { flex-direction: column; }
+      .cta-sep { display: none; }
+
+      .footer-inner { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
 </head>
 <body>
-    <header class="shell">
-        <div class="brand">
-            <img src="lituna-lockup.svg" alt="Lituna">
+
+  <!-- ============================================================
+       NAV
+       ============================================================ -->
+  <nav id="nav" role="banner">
+    <div class="nav-inner">
+      <a href="https://www.lituna.com" class="nav-logo" aria-label="Lituna — volver al sitio principal">
+        <img src="lituna-lockup.svg" style="height:22px;width:auto;" alt="Lituna">
+      </a>
+      <span class="nav-badge" aria-label="Estado del programa">Partner Program · Abierto</span>
+      <div class="nav-spacer"></div>
+      <a href="#diagnostico" class="nav-cta">Empezar →</a>
+    </div>
+  </nav>
+
+  <main>
+
+    <!-- ============================================================
+         S1 · HERO
+         ============================================================ -->
+    <section id="hero" aria-labelledby="hero-heading">
+      <div class="hero-grid" aria-hidden="true"></div>
+      <div class="container">
+        <div class="hero-inner">
+          <div class="eyebrow hero-eyebrow">DECISION OS · PARTNER PROGRAM · 2026</div>
+          <h1 class="hero-h1" id="hero-heading">
+            Construye con agentes.<br>
+            <em>Escala con nosotros.</em>
+          </h1>
+          <p class="hero-sub">
+            Integra capacidades de IA autónoma en tu producto, tu consultoría o tu próximo proyecto.
+            Acceso directo a la capa de inteligencia de Decision OS.
+          </p>
+          <div class="hero-chips" role="group" aria-label="¿Cómo quieres trabajar con nosotros?">
+            <button class="chip" data-path="integrador" aria-pressed="false">Quiero integrarlo</button>
+            <button class="chip" data-path="consultor" aria-pressed="false">Quiero ofrecerlo</button>
+            <button class="chip" data-path="proyecto" aria-pressed="false">Tengo un proyecto</button>
+          </div>
+          <div class="hero-meta">
+            <span class="tick">DECISION OS · PILOT STAGE</span>
+            <span class="tick">LATAM · MX</span>
+            <span class="tick">ACCESO CONTROLADO</span>
+          </div>
         </div>
-        <div class="status">GATEWAY &middot; TLS-1.3 &middot; RESTRICTED</div>
-    </header>
+      </div>
+    </section>
 
-    <main class="shell">
-        <section class="gateway" aria-labelledby="gateway-title">
-            <p class="kicker">Enterprise Gateway &middot; Restricted Access</p>
-            <h1 id="gateway-title">Access to <em>operational infrastructure</em>.</h1>
-            <p class="intro">
-                Restricted environment for integrated pilots, situational monitoring, and governed decision operations.
-            </p>
+    <!-- ============================================================
+         S2 · DIAGNÓSTICO
+         ============================================================ -->
+    <section id="diagnostico" aria-labelledby="diag-heading">
+      <div class="container">
+        <div class="diag-intro">
+          <div class="eyebrow section-eyebrow">DIAGNÓSTICO · 002</div>
+          <p class="diag-intro-text" id="diag-heading">
+            Elige cómo trabajas con nosotros.<br>
+            Te mostramos exactamente qué obtienes.
+          </p>
+        </div>
 
-            <div class="panel">
-                <div class="access-list">
-                    <a href="#" class="access-link primary">
-                        <span class="access-text">
-                            <span class="access-title">Client Portal</span>
-                            <span class="access-meta">PILOT RUNTIME &middot; AUTH REQUIRED</span>
-                        </span>
-                        <span class="arrow" aria-hidden="true">&#8599;</span>
-                    </a>
+        <div id="diagnostico-component">
 
-                    <div class="divider">Internal Control</div>
+          <!-- Step 1 -->
+          <div id="step-1" class="diag-step active">
+            <div class="step-header">
+              <span class="step-num">01 / 02</span>
+              <span class="step-lbl">¿Cuál es tu relación con el proyecto?</span>
+            </div>
+            <div class="path-cards" role="radiogroup" aria-label="Tipo de partner">
+              <button class="path-card" data-path="integrador" role="radio" aria-checked="false">
+                <span class="card-id">01 · Integrador</span>
+                <span class="card-title">Quiero integrarlo en mi producto.</span>
+                <span class="card-desc">Tienes un producto o plataforma propia y quieres añadir capacidades de agentes IA a tu stack técnico.</span>
+                <span class="card-cue">Seleccionar →</span>
+              </button>
+              <button class="path-card" data-path="consultor" role="radio" aria-checked="false">
+                <span class="card-id">02 · Consultor</span>
+                <span class="card-title">Quiero ofrecerlo a mis clientes.</span>
+                <span class="card-desc">Tienes una práctica de consultoría, agencia o servicio gestionado y quieres llevar Decision OS a tus clientes.</span>
+                <span class="card-cue">Seleccionar →</span>
+              </button>
+              <button class="path-card" data-path="proyecto" role="radio" aria-checked="false">
+                <span class="card-id">03 · Proyecto</span>
+                <span class="card-title">Tengo un proyecto específico.</span>
+                <span class="card-desc">Tienes un caso de uso concreto — interno o para un cliente — que requiere inteligencia de decisión autónoma.</span>
+                <span class="card-cue">Seleccionar →</span>
+              </button>
+            </div>
+            <div id="continue-step1" class="step-continue">
+              <button class="btn-continue" id="btn-to-step2">Continuar <span aria-hidden="true">→</span></button>
+            </div>
+          </div>
 
-                    <a href="#" class="access-link">
-                        <span class="access-text">
-                            <span class="access-title">Admin Console & Governance</span>
-                            <span class="access-meta">OPS CONSOLE &middot; WAF PROTECTED</span>
-                        </span>
-                        <span class="arrow" aria-hidden="true">&#8599;</span>
-                    </a>
+          <!-- Step 2 (content injected by JS) -->
+          <div id="step-2" class="diag-step">
+            <div class="step-header">
+              <span class="step-num">02 / 02</span>
+              <span id="step2-lbl" class="step-lbl"></span>
+            </div>
+            <p id="step2-question" class="subtype-question"></p>
+            <div id="subtype-cards" class="subtype-cards" role="radiogroup" aria-label="Contexto adicional"></div>
+            <div id="continue-step2" class="step-continue">
+              <button class="btn-continue" id="btn-to-profile">Ver mi perfil <span aria-hidden="true">→</span></button>
+            </div>
+          </div>
 
+          <!-- Profile building -->
+          <div id="profile-building" role="status" aria-live="polite" aria-label="Construyendo tu perfil">
+            <p class="build-label">Construyendo perfil</p>
+            <div class="build-bar" aria-hidden="true">
+              <div class="build-bar-fill" id="build-bar"></div>
+            </div>
+            <ul class="build-steps" id="build-steps">
+              <li class="build-step" data-delay="200">Analizando tipo de integración</li>
+              <li class="build-step" data-delay="650">Identificando capacidades relevantes</li>
+              <li class="build-step" data-delay="1100">Asignando beneficios específicos</li>
+            </ul>
+          </div>
+
+          <!-- Profile result -->
+          <div id="profile-result">
+            <div class="profile-card">
+              <div class="profile-header">
+                <div>
+                  <p class="profile-lbl" id="result-lbl">Perfil asignado</p>
+                  <h3 class="profile-title" id="result-title"></h3>
                 </div>
+                <span class="profile-tag" id="result-tag"></span>
+              </div>
+              <p class="profile-intro" id="result-intro"></p>
+              <div class="profile-benefits" id="result-benefits"></div>
+              <div class="profile-actions">
+                <a href="#" id="result-cta" class="btn-primary" target="_blank" rel="noopener">
+                  <span id="result-cta-text"></span>
+                  <span aria-hidden="true">→</span>
+                </a>
+                <button class="btn-reset" id="btn-reset">Cambiar perfil</button>
+              </div>
             </div>
+          </div>
 
-            <a href="https://lituna.com/trust" class="trust-link" target="_blank" rel="noopener noreferrer">
-                <span class="trust-link-label">TRUST &amp; COMPLIANCE &middot; View Trust</span>
-                <span class="trust-link-arrow" aria-hidden="true">&#8599;</span>
-            </a>
-        </section>
-    </main>
+        </div><!-- /diagnostico-component -->
+      </div>
+    </section>
 
-    <footer class="shell">
-        <div class="footer-top">
-            <div class="legal">
-                &copy; Lituna 2026. Restricted access under confidentiality obligations.
+    <!-- ============================================================
+         S3 · PLATAFORMA
+         ============================================================ -->
+    <section id="plataforma" class="section section-lg" aria-labelledby="platform-heading">
+      <div class="container">
+        <div class="platform-grid">
+          <div class="platform-sticky">
+            <div class="eyebrow section-eyebrow">DECISION OS · 003</div>
+            <h2 class="section-h2" id="platform-heading">
+              No es un SDK genérico.
+              <span>Es la capa de</span>
+              <span>inteligencia.</span>
+            </h2>
+            <p class="section-lead">
+              Decision OS opera en entornos donde el acceso, el contexto, la trazabilidad y la responsabilidad operativa no son opcionales.
+            </p>
+            <div style="margin-top:28px;padding-top:20px;border-top:1px solid var(--color-border);">
+              <span class="tick">PILOT STAGE · 2026.05</span>
             </div>
-            <div class="trust-badges" aria-label="Security and governance posture">
-                <span>SOC 2 READY</span>
-                <span>ISO 42001 ALIGNED</span>
-                <span>AES-256</span>
-                <span>ISO 27001 SCOPE-READY</span>
+          </div>
+          <div>
+            <div class="platform-point">
+              <span class="pp-id">01 · Acceso</span>
+              <div>
+                <p class="pp-title">Perímetros declarados, no asumidos.</p>
+                <p class="pp-desc">Cada integrador opera dentro de un scope definido. El acceso a capacidades, datos y contexto se declara explícitamente — no se hereda por conveniencia.</p>
+              </div>
             </div>
+            <div class="platform-point">
+              <span class="pp-id">02 · Contexto</span>
+              <div>
+                <p class="pp-title">El modelo no depende de tus datos.</p>
+                <p class="pp-desc">Los datos internos del cliente entran como contexto vía conectores estándar. La plataforma opera con o sin acceso al stack del cliente — sin dependencia estructural del modelo sobre datos privados.</p>
+              </div>
+            </div>
+            <div class="platform-point">
+              <span class="pp-id">03 · Trazabilidad</span>
+              <div>
+                <p class="pp-title">Cada salida lleva traza.</p>
+                <p class="pp-desc">Las recomendaciones se fundamentan en evidencia explícita. Los agentes están versionados y vinculados a autoridad nominal. Auditable por diseño, no por adición.</p>
+              </div>
+            </div>
+            <div class="platform-point">
+              <span class="pp-id">04 · Gobernanza</span>
+              <div>
+                <p class="pp-title">El juicio humano permanece en el proceso.</p>
+                <p class="pp-desc">Decision OS genera recomendaciones, no instrucciones. Los procesos sensibles permanecen bajo revisión humana. La autoridad sobre decisiones consecuentes no se delega al sistema.</p>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="trust-tagline">Operational judgment infrastructure for institutions that cannot outsource consequence.</div>
-    </footer>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         S4 · MÉTRICAS TÉCNICAS
+         ============================================================ -->
+    <section id="metricas" class="section section-lg" aria-labelledby="metrics-heading">
+      <div class="container">
+        <div style="margin-bottom:48px;">
+          <div class="eyebrow section-eyebrow">MÉTRICAS TÉCNICAS · 004</div>
+          <h2 class="section-h2" id="metrics-heading">
+            Plataforma operativa.
+            <span>Números reales.</span>
+          </h2>
+        </div>
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <p class="metric-lbl">Latencia promedio</p>
+            <!-- TODO[1]: Reemplazar con latencia real -->
+            <p class="metric-val" data-counter data-target="800" data-prefix="&lt;" data-suffix="ms">&lt;800ms</p>
+            <p class="metric-desc">Tiempo de respuesta en condiciones de piloto controlado</p>
+          </div>
+          <div class="metric-card">
+            <p class="metric-lbl">Uptime registrado</p>
+            <!-- TODO[2]: Reemplazar con uptime SLA real -->
+            <p class="metric-val" data-counter data-target="99" data-prefix="" data-suffix=".7%">99.7%</p>
+            <p class="metric-desc">Disponibilidad en operaciones piloto activas</p>
+          </div>
+          <div class="metric-card">
+            <p class="metric-lbl">Integraciones activas</p>
+            <!-- TODO[3]: Reemplazar con número real -->
+            <p class="metric-val" data-counter data-target="12" data-prefix="" data-suffix="">12</p>
+            <p class="metric-desc">Integraciones en operación durante la etapa piloto</p>
+          </div>
+          <div class="metric-card">
+            <p class="metric-lbl">Tiempo a primer deploy</p>
+            <!-- TODO[4]: Reemplazar con tiempo real -->
+            <p class="metric-val" data-counter data-target="48" data-prefix="&lt;" data-suffix="h">&lt;48h</p>
+            <p class="metric-desc">Desde acceso API hasta primer deployment funcional</p>
+          </div>
+        </div>
+
+        <div class="cases-head">
+          <div class="eyebrow">PARTNERS EN PILOTO</div>
+          <span class="tick">ETAPA ACTUAL · 2026.Q2</span>
+        </div>
+        <!-- TODO[6]: Reemplazar con casos reales cuando estén disponibles -->
+        <div class="cases-grid">
+          <div class="case-card">
+            <span class="case-status">En onboarding</span>
+            <p class="case-ctx">Integrador Técnico · SaaS</p>
+            <p class="case-title">Partner en onboarding</p>
+            <p class="case-desc">Integración de capacidades de agentes en plataforma de análisis de operaciones. Caso disponible post-piloto.</p>
+          </div>
+          <div class="case-card">
+            <span class="case-status">En onboarding</span>
+            <p class="case-ctx">Partner Comercial · Consultoría</p>
+            <p class="case-title">Partner en onboarding</p>
+            <p class="case-desc">Delivery de Decision OS a clientes enterprise en sector financiero. Caso disponible post-piloto.</p>
+          </div>
+          <div class="case-card">
+            <span class="case-status">En evaluación</span>
+            <p class="case-ctx">Project Partner · Operaciones</p>
+            <p class="case-title">Proyecto en evaluación</p>
+            <p class="case-desc">Automatización de ciclos de decisión en cadena de suministro. En evaluación técnica.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         S5 · MODELO DE PARTNERSHIP
+         ============================================================ -->
+    <section id="modelo" class="section section-lg" aria-labelledby="model-heading">
+      <div class="container">
+        <div style="margin-bottom:48px;">
+          <div class="eyebrow section-eyebrow">MODELO DE PARTNERSHIP · 005</div>
+          <h2 class="section-h2" id="model-heading">
+            Tres modelos.
+            <span>Un programa.</span>
+          </h2>
+          <p class="section-lead">Los términos específicos — porcentajes, tarifas y condiciones comerciales — están en el portal. Aquí la estructura.</p>
+        </div>
+        <div class="model-grid">
+          <div class="model-card">
+            <span class="mc-id">01 · Integrador</span>
+            <p class="mc-title">Revenue share por deployment</p>
+            <p class="mc-desc">Por cada deployment activo que generes a través de tu integración de Decision OS, participas del revenue generado. El modelo escala con uso.</p>
+            <div class="mc-terms">
+              <span class="mc-term">Revenue share por cliente activo</span>
+              <span class="mc-term">Escalonado por volumen</span>
+              <span class="mc-term">Porcentajes disponibles en el portal</span>
+            </div>
+          </div>
+          <div class="model-card">
+            <span class="mc-id">02 · Consultor</span>
+            <p class="mc-title">Comisión por cliente entregado</p>
+            <p class="mc-desc">Por cada cliente al que entregues Decision OS como parte de tu práctica, recibes comisión sobre el contrato y acceso a materiales de delivery certificado.</p>
+            <div class="mc-terms">
+              <span class="mc-term">Comisión sobre contrato inicial</span>
+              <span class="mc-term">Residual en renovaciones</span>
+              <span class="mc-term">Porcentajes disponibles en el portal</span>
+            </div>
+          </div>
+          <div class="model-card">
+            <span class="mc-id">03 · Proyecto</span>
+            <p class="mc-title">Fee por engagement</p>
+            <p class="mc-desc">Para proyectos específicos, el modelo es un fee de engagement estructurado por fase. La evaluación inicial es sin costo. El alcance se define en conjunto.</p>
+            <div class="mc-terms">
+              <span class="mc-term">Evaluación inicial sin costo</span>
+              <span class="mc-term">Propuesta por alcance y fases</span>
+              <span class="mc-term">Términos disponibles en el portal</span>
+            </div>
+          </div>
+        </div>
+        <!-- TODO[9]: Enlazar FAQ cuando esté disponible -->
+        <p class="model-note">Los porcentajes, tarifas y términos completos están disponibles en el portal de partners tras verificación de identidad.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         CTA FINAL
+         ============================================================ -->
+    <section id="cta-final" aria-labelledby="cta-heading">
+      <div class="container">
+        <div class="eyebrow cta-eyebrow">ACCESO · 006</div>
+        <h2 class="cta-h2" id="cta-heading">
+          Listo cuando<br><em>tú lo estés.</em>
+        </h2>
+        <p class="cta-sub">
+          El programa de partners está abierto en etapa piloto. Acceso limitado por trimestre.
+        </p>
+        <!-- TODO[5]: Reemplazar con URL real del portal -->
+        <div class="cta-primary-row">
+          <a href="https://portal.lituna.dev" class="btn-primary-lg" target="_blank" rel="noopener" data-cta="final-portal">
+            Acceder al portal de partners <span aria-hidden="true">→</span>
+          </a>
+        </div>
+        <div class="cta-secondary">
+          <!-- TODO[7]: Reemplazar con email real -->
+          <a href="mailto:partners@lituna.com" class="cta-link" data-cta="final-email">Hablar con el equipo</a>
+          <span class="cta-sep" aria-hidden="true">·</span>
+          <!-- TODO[8]: Reemplazar con URL real -->
+          <a href="#" class="cta-link" data-cta="final-docs">Ver documentación técnica</a>
+          <span class="cta-sep" aria-hidden="true">·</span>
+          <!-- TODO[9]: Reemplazar con URL real -->
+          <a href="#" class="cta-link" data-cta="final-faq">Preguntas frecuentes</a>
+        </div>
+        <div class="cta-meta">
+          <span class="tick">PARTNER PROGRAM · ABIERTO</span>
+          <span class="tick">ACCESO LIMITADO · 2026.Q2</span>
+          <span class="tick">DECISION OS · PILOT STAGE</span>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-left">
+          <img src="lituna-lockup.svg" style="height:16px;width:auto;" aria-hidden="true" alt="">
+          <span class="tick">© LITUNA 2026</span>
+        </div>
+        <nav class="footer-links" aria-label="Legal">
+          <a href="https://www.lituna.com/trust" class="footer-link" target="_blank" rel="noopener">Trust</a>
+          <a href="https://www.lituna.com/privacy" class="footer-link" target="_blank" rel="noopener">Privacy</a>
+          <a href="https://www.lituna.com/security" class="footer-link" target="_blank" rel="noopener">Security</a>
+          <a href="https://www.lituna.com/compliance" class="footer-link" target="_blank" rel="noopener">Compliance</a>
+        </nav>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ============================================================
+    // Analytics — replace with gtag or equivalent
+    // ============================================================
+    function trackEvent(name, data) {
+      // TODO: Replace with gtag('event', name, data) or equivalent
+      console.log('[Partner Analytics]', name, data || {});
+    }
+
+    // ============================================================
+    // Nav scroll
+    // ============================================================
+    (function () {
+      var nav = document.getElementById('nav');
+      var ticking = false;
+      window.addEventListener('scroll', function () {
+        if (!ticking) {
+          requestAnimationFrame(function () {
+            nav.classList.toggle('scrolled', window.scrollY > 80);
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }, { passive: true });
+    })();
+
+    // ============================================================
+    // Hero chips → scroll + pre-select
+    // ============================================================
+    (function () {
+      var chips = document.querySelectorAll('.chip[data-path]');
+      chips.forEach(function (chip) {
+        chip.addEventListener('click', function () {
+          var path = this.dataset.path;
+          chips.forEach(function (c) {
+            c.classList.remove('chip--active');
+            c.setAttribute('aria-pressed', 'false');
+          });
+          this.classList.add('chip--active');
+          this.setAttribute('aria-pressed', 'true');
+
+          document.getElementById('diagnostico').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+          setTimeout(function () {
+            var card = document.querySelector('.path-card[data-path="' + path + '"]');
+            if (card) card.click();
+          }, 600);
+
+          trackEvent('hero_chip_clicked', { path: path });
+        });
+      });
+    })();
+
+    // ============================================================
+    // Diagnostico Component
+    // ============================================================
+    var STEP2_CONTENT = {
+      integrador: {
+        label: '¿En qué etapa está tu integración?',
+        question: 'Cuéntanos un poco más sobre tu contexto técnico.',
+        options: [
+          {
+            id: 'saas',
+            title: 'SaaS / Producto propio',
+            desc: 'Tienes un producto en producción y quieres añadir una capa de inteligencia de decisión.',
+            intro: 'Tu perfil es el de un integrador de producto. El acceso API te da el control técnico que necesitas para incorporar Decision OS sin modificar tu arquitectura central.'
+          },
+          {
+            id: 'enterprise',
+            title: 'Aplicación interna / Enterprise',
+            desc: 'Desarrollas aplicaciones internas para organizaciones y buscas automatizar ciclos de decisión.',
+            intro: 'Tu perfil es el de un integrador enterprise. Priorizamos el sandbox seguro, la trazabilidad y el soporte técnico directo durante la integración.'
+          },
+          {
+            id: 'analytics',
+            title: 'Herramienta de datos / Analytics',
+            desc: 'Operas sobre datos y quieres añadir inteligencia interpretativa o de recomendación a tus pipelines.',
+            intro: 'Tu perfil es el de un integrador de datos. La capa de contexto de Decision OS se conecta con tu stack analítico sin reemplazarlo.'
+          }
+        ]
+      },
+      consultor: {
+        label: '¿Cómo trabajas con tus clientes?',
+        question: 'Queremos entender tu modelo de delivery.',
+        options: [
+          {
+            id: 'consultoria',
+            title: 'Consultoría con entregables',
+            desc: 'Entregas proyectos acotados, diagnósticos o transformaciones a clientes enterprise.',
+            intro: 'Tu perfil es el de un socio de delivery. La certificación, los materiales de propuesta y el soporte de preventa son tu punto de entrada inmediato.'
+          },
+          {
+            id: 'managed',
+            title: 'Managed services / Outsourcing',
+            desc: 'Operas funciones o procesos de forma continua para tus clientes.',
+            intro: 'Tu perfil es el de un operador de servicio. La licencia comercial y el onboarding están diseñados para tu modelo de delivery continuo.'
+          },
+          {
+            id: 'var',
+            title: 'Integrador de software (VAR)',
+            desc: 'Combinas productos de terceros con desarrollo propio para entregar soluciones a medida.',
+            intro: 'Tu perfil es el de un reseller técnico. El modelo comercial flexible de Decision OS se adapta a tu estructura de márgenes y ciclos de venta.'
+          }
+        ]
+      },
+      proyecto: {
+        label: '¿Cuál es el alcance del proyecto?',
+        question: 'Ayúdanos a entender el horizonte de trabajo.',
+        options: [
+          {
+            id: 'piloto',
+            title: 'Piloto rápido (< 3 meses)',
+            desc: 'Tienes un caso de uso específico y quieres validarlo con velocidad.',
+            intro: 'Tu perfil es el de un proyecto de validación rápida. El equipo de soluciones puede evaluar tu caso esta semana y estructurar una propuesta de piloto en días.'
+          },
+          {
+            id: 'estructurado',
+            title: 'Proyecto estructurado (3–12 meses)',
+            desc: 'El proyecto tiene fases, entregables y stakeholders con expectativas claras.',
+            intro: 'Tu perfil es el de un proyecto estructurado. Diseñamos el engagement por fases para tu alcance específico, con hitos de revisión y handoff operativo.'
+          },
+          {
+            id: 'largo-plazo',
+            title: 'Transformación de largo plazo',
+            desc: 'El proyecto es parte de un cambio estructural que va más allá de un entregable puntual.',
+            intro: 'Tu perfil es el de un proyecto de largo plazo. La conversación empieza con una evaluación técnica y estratégica antes de comprometer estructura.'
+          }
+        ]
+      }
+    };
+
+    var PROFILES = {
+      integrador: {
+        title: 'Integrador Técnico',
+        tag: 'ACCESO API',
+        intro: 'Tu perfil es el de un integrador técnico. Obtienes acceso al API de Decision OS, sandbox dedicado y el soporte necesario para llevar tu integración a producción.',
+        benefits: [
+          'Acceso al sandbox de Decision OS API con credenciales dedicadas',
+          'Documentación técnica completa y guías de integración paso a paso',
+          'Soporte técnico directo durante el proceso de integración',
+          'Revenue share sobre deployments activos generados a través de tu integración',
+          'Acceso anticipado a nuevas capacidades antes del release general'
+        ],
+        ctaLabel: 'Solicitar acceso de integrador'
+      },
+      consultor: {
+        title: 'Partner Comercial',
+        tag: 'LICENCIA COMERCIAL',
+        intro: 'Tu perfil es el de un partner comercial. Obtienes la licencia, los materiales y la certificación para llevar Decision OS a tus clientes de forma estructurada.',
+        benefits: [
+          'Licencia comercial para delivery y reventa de Decision OS',
+          'Materiales de propuesta, co-venta y presentación a clientes',
+          'Certificación oficial de partner con acceso al directorio',
+          'Cuenta demo para pruebas de concepto con clientes',
+          'Soporte de preventa y estructuración de propuestas para oportunidades específicas'
+        ],
+        ctaLabel: 'Solicitar acceso comercial'
+      },
+      proyecto: {
+        title: 'Project Partner',
+        tag: 'ENGAGEMENT DIRECTO',
+        intro: 'Tu perfil es el de un project partner. Obtienes una evaluación técnica directa y una propuesta de engagement estructurada para tu caso de uso específico.',
+        benefits: [
+          'Evaluación técnica del caso de uso sin costo inicial',
+          'Estructura de piloto controlada diseñada para el alcance del proyecto',
+          'Acceso directo al equipo de soluciones de Decision OS',
+          'Propuesta de engagement por fases con hitos de revisión',
+          'Ruta hacia escalamiento y operación continua post-piloto'
+        ],
+        ctaLabel: 'Enviar propuesta de proyecto'
+      }
+    };
+
+    function Diagnostico(el, options) {
+      this.el = el;
+      this.mode = (options && options.mode) || 'static';
+      this.aiEndpoint = (options && options.aiEndpoint) || null;
+      this.selectedPath = null;
+      this.selectedSubtype = null;
+      this._init();
+    }
+
+    Diagnostico.prototype._init = function () {
+      var self = this;
+
+      // Path card clicks
+      this.el.querySelectorAll('.path-card').forEach(function (card) {
+        card.addEventListener('click', function () { self._selectPath(this.dataset.path); });
+        card.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); self._selectPath(this.dataset.path); }
+        });
+      });
+
+      // Step 1 → 2
+      document.getElementById('btn-to-step2').addEventListener('click', function () {
+        if (self.selectedPath) self._showStep2();
+      });
+
+      // Step 2 → profile
+      document.getElementById('btn-to-profile').addEventListener('click', function () {
+        if (self.selectedSubtype) self._buildProfile();
+      });
+
+      // Reset
+      document.getElementById('btn-reset').addEventListener('click', function () { self._reset(); });
+    };
+
+    Diagnostico.prototype._selectPath = function (path) {
+      this.selectedPath = path;
+      this.el.querySelectorAll('.path-card').forEach(function (c) {
+        var sel = c.dataset.path === path;
+        c.classList.toggle('selected', sel);
+        c.classList.toggle('inactive', !sel);
+        c.setAttribute('aria-checked', sel ? 'true' : 'false');
+      });
+      document.getElementById('continue-step1').classList.add('visible');
+      trackEvent('diagnostic_step1_selected', { path: path });
+    };
+
+    Diagnostico.prototype._showStep2 = function () {
+      var content = STEP2_CONTENT[this.selectedPath];
+      var self = this;
+
+      document.getElementById('step2-lbl').textContent = content.label;
+      document.getElementById('step2-question').textContent = content.question;
+
+      var container = document.getElementById('subtype-cards');
+      container.innerHTML = '';
+      content.options.forEach(function (opt) {
+        var btn = document.createElement('button');
+        btn.className = 'subtype-card';
+        btn.dataset.subtype = opt.id;
+        btn.setAttribute('role', 'radio');
+        btn.setAttribute('aria-checked', 'false');
+        btn.innerHTML =
+          '<span class="sub-marker" aria-hidden="true"></span>' +
+          '<span class="sub-title">' + opt.title + '</span>' +
+          '<span class="sub-desc">' + opt.desc + '</span>';
+        btn.addEventListener('click', function () { self._selectSubtype(opt.id, opt.intro); });
+        btn.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); self._selectSubtype(opt.id, opt.intro); }
+        });
+        container.appendChild(btn);
+      });
+
+      document.getElementById('step-1').classList.remove('active');
+      setTimeout(function () { document.getElementById('step-2').classList.add('active'); }, 40);
+    };
+
+    Diagnostico.prototype._selectSubtype = function (subtype, intro) {
+      this.selectedSubtype = subtype;
+      this._subtypeIntro = intro;
+      document.querySelectorAll('.subtype-card').forEach(function (c) {
+        var sel = c.dataset.subtype === subtype;
+        c.classList.toggle('selected', sel);
+        c.classList.toggle('inactive', !sel);
+        c.setAttribute('aria-checked', sel ? 'true' : 'false');
+      });
+      document.getElementById('continue-step2').classList.add('visible');
+      trackEvent('diagnostic_step2_selected', { path: this.selectedPath, subtype: subtype });
+    };
+
+    Diagnostico.prototype._buildProfile = function () {
+      var self = this;
+      document.getElementById('step-2').classList.remove('active');
+
+      setTimeout(function () {
+        var building = document.getElementById('profile-building');
+        building.classList.add('active');
+
+        setTimeout(function () {
+          document.getElementById('build-bar').style.width = '100%';
+        }, 40);
+
+        document.querySelectorAll('.build-step').forEach(function (item) {
+          var delay = parseInt(item.dataset.delay, 10) || 0;
+          setTimeout(function () { item.classList.add('done'); }, delay);
+        });
+
+        setTimeout(function () {
+          building.classList.remove('active');
+          self._showResult();
+        }, 1650);
+      }, 40);
+
+      trackEvent('profile_build_started', { path: this.selectedPath, subtype: this.selectedSubtype });
+    };
+
+    Diagnostico.prototype._showResult = function () {
+      if (this.mode === 'ai' && this.aiEndpoint) {
+        // TODO: AI mode — uncomment and implement:
+        // var self = this;
+        // fetch(this.aiEndpoint, {
+        //   method: 'POST',
+        //   headers: { 'Content-Type': 'application/json' },
+        //   body: JSON.stringify({ path: this.selectedPath, subtype: this.selectedSubtype })
+        // }).then(function(r) { return r.json(); }).then(function(data) { self._renderResult(data); });
+        this._renderResult(PROFILES[this.selectedPath]);
+      } else {
+        this._renderResult(PROFILES[this.selectedPath]);
+      }
+    };
+
+    Diagnostico.prototype._renderResult = function (profile) {
+      document.getElementById('result-title').textContent = profile.title;
+      document.getElementById('result-tag').textContent = profile.tag;
+      document.getElementById('result-intro').textContent = this._subtypeIntro || profile.intro;
+
+      var benefitsEl = document.getElementById('result-benefits');
+      benefitsEl.innerHTML = profile.benefits.map(function (b) {
+        return '<div class="benefit-item"><span class="benefit-dot" aria-hidden="true"></span><span class="benefit-text">' + b + '</span></div>';
+      }).join('');
+
+      // TODO[5]: Reemplazar base URL con URL real del portal
+      var url = 'https://portal.lituna.dev?path=' + this.selectedPath + '&subtype=' + this.selectedSubtype + '&source=partner-page';
+      var ctaEl = document.getElementById('result-cta');
+      ctaEl.href = url;
+      document.getElementById('result-cta-text').textContent = profile.ctaLabel;
+
+      document.getElementById('profile-result').classList.add('active');
+
+      ctaEl.addEventListener('click', function () {
+        trackEvent('cta_clicked', { cta: 'portal_entry', path: this.selectedPath, profile: profile.title });
+      }.bind(this), { once: true });
+
+      trackEvent('profile_revealed', { path: this.selectedPath, subtype: this.selectedSubtype, profile: profile.title });
+    };
+
+    Diagnostico.prototype._reset = function () {
+      this.selectedPath = null;
+      this.selectedSubtype = null;
+      this._subtypeIntro = null;
+
+      this.el.querySelectorAll('.path-card').forEach(function (c) {
+        c.classList.remove('selected', 'inactive');
+        c.setAttribute('aria-checked', 'false');
+      });
+      document.getElementById('continue-step1').classList.remove('visible');
+
+      var bar = document.getElementById('build-bar');
+      bar.style.transition = 'none';
+      bar.style.width = '0%';
+      document.querySelectorAll('.build-step').forEach(function (i) { i.classList.remove('done'); });
+      setTimeout(function () { bar.style.transition = 'width 1.5s ease-out'; }, 60);
+
+      document.getElementById('profile-result').classList.remove('active');
+      document.getElementById('profile-building').classList.remove('active');
+      document.getElementById('step-2').classList.remove('active');
+      document.getElementById('step-1').classList.add('active');
+
+      document.querySelectorAll('.chip').forEach(function (c) {
+        c.classList.remove('chip--active');
+        c.setAttribute('aria-pressed', 'false');
+      });
+
+      trackEvent('diagnostic_reset', {});
+      document.getElementById('diagnostico').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+
+    // Initialize
+    var diagnosticoInstance = new Diagnostico(
+      document.getElementById('diagnostico-component'),
+      { mode: 'static' }
+      // AI mode: { mode: 'ai', aiEndpoint: 'https://api.lituna.dev/partner-profile' }
+    );
+
+    // ============================================================
+    // Animated counters (Intersection Observer)
+    // ============================================================
+    (function () {
+      var counters = document.querySelectorAll('[data-counter]');
+      if (!counters.length || !window.IntersectionObserver) return;
+
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          var el = entry.target;
+          var target = parseInt(el.dataset.target, 10);
+          var prefix = el.dataset.prefix || '';
+          var suffix = el.dataset.suffix || '';
+          var duration = 1200;
+          var start = performance.now();
+
+          function animate(now) {
+            var elapsed = now - start;
+            var progress = Math.min(elapsed / duration, 1);
+            var eased = 1 - Math.pow(1 - progress, 3);
+            var current = Math.round(eased * target);
+            el.textContent = prefix + current + suffix;
+            if (progress < 1) requestAnimationFrame(animate);
+          }
+
+          requestAnimationFrame(animate);
+          observer.unobserve(el);
+        });
+      }, { threshold: 0.5 });
+
+      counters.forEach(function (el) { observer.observe(el); });
+    })();
+
+    // ============================================================
+    // CTA tracking
+    // ============================================================
+    document.querySelectorAll('[data-cta]').forEach(function (el) {
+      el.addEventListener('click', function () {
+        trackEvent('cta_clicked', { cta: this.dataset.cta });
+      });
+    });
+  </script>
 </body>
 </html>
